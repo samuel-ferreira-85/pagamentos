@@ -1,8 +1,8 @@
-package br.com.alurafood.pedidos.controller;
+package com.samuel.pedidos.controller;
 
-import br.com.alurafood.pedidos.dto.PedidoDto;
-import br.com.alurafood.pedidos.dto.StatusDto;
-import br.com.alurafood.pedidos.service.PedidoService;
+import com.samuel.pedidos.dto.PedidoDto;
+import com.samuel.pedidos.dto.StatusDto;
+import com.samuel.pedidos.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -29,13 +29,7 @@ public class PedidoController {
         @GetMapping("/{id}")
         public ResponseEntity<PedidoDto> listarPorId(@PathVariable @NotNull Long id) {
             PedidoDto dto = service.obterPorId(id);
-
             return  ResponseEntity.ok(dto);
-        }
-
-        @GetMapping("/porta")
-        public String retornaPorta(@Value("${local.server.port}") String porta){
-            return String.format("Requisição respondida pela instância executando na porta %s", porta);
         }
 
         @PostMapping()
@@ -50,8 +44,7 @@ public class PedidoController {
 
         @PutMapping("/{id}/status")
         public ResponseEntity<PedidoDto> atualizaStatus(@PathVariable Long id, @RequestBody StatusDto status){
-           PedidoDto dto = service.atualizaStatus(id, status);
-
+            PedidoDto dto = service.atualizaStatus(id, status);
             return ResponseEntity.ok(dto);
         }
 
@@ -59,8 +52,12 @@ public class PedidoController {
         @PutMapping("/{id}/pago")
         public ResponseEntity<Void> aprovaPagamento(@PathVariable @NotNull Long id) {
             service.aprovaPagamentoPedido(id);
-
             return ResponseEntity.ok().build();
-
         }
+
+    @GetMapping("/porta")
+    public String retornaPorta(@Value("${local.server.port}") String porta){
+        return String.format("Requisição respondida pela instância executando na porta %s", porta);
+    }
+
 }

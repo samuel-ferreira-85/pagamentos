@@ -1,4 +1,4 @@
-package br.com.alurafood.pedidos.model;
+package com.samuel.pedidos.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

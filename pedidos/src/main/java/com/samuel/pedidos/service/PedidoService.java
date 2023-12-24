@@ -1,10 +1,10 @@
-package br.com.alurafood.pedidos.service;
+package com.samuel.pedidos.service;
 
-import br.com.alurafood.pedidos.dto.PedidoDto;
-import br.com.alurafood.pedidos.dto.StatusDto;
-import br.com.alurafood.pedidos.model.Pedido;
-import br.com.alurafood.pedidos.model.Status;
-import br.com.alurafood.pedidos.repository.PedidoRepository;
+import com.samuel.pedidos.dto.PedidoDto;
+import com.samuel.pedidos.dto.StatusDto;
+import com.samuel.pedidos.model.Pedido;
+import com.samuel.pedidos.model.Status;
+import com.samuel.pedidos.repository.PedidoRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
