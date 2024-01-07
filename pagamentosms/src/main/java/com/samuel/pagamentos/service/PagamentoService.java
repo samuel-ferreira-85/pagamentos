@@ -1,6 +1,7 @@
 package com.samuel.pagamentos.service;
 
 import com.samuel.pagamentos.dto.PagamentoDto;
+import com.samuel.pagamentos.http.PedidoClient;
 import com.samuel.pagamentos.model.Pagamento;
 import com.samuel.pagamentos.model.Status;
 import com.samuel.pagamentos.repository.PagamentoRepository;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -22,6 +24,7 @@ public class PagamentoService {
 
     private PagamentoRepository pagamentoRepository;
     private ModelMapper modelMapper;
+    private PedidoClient pedidoClient;
 
     public Page<PagamentoDto> obterTodos(Pageable pageable) {
         return pagamentoRepository.findAll(pageable)
@@ -52,5 +55,20 @@ public class PagamentoService {
 
     public void excluirPagamento(Long id) {
         pagamentoRepository.deleteById(id);
+    }
+
+    public void confirmarPagamento(Long id) {
+        Optional<Pagamento> pagamento = pagamentoRepository.findById(id);
+        if (!pagamento.isPresent()) throw new EntityNotFoundException();
+        pagamento.get().setStatus(Status.CONFIRMADO);
+        pagamentoRepository.save(pagamento.get());
+        pedidoClient.atualizarPagamento(pagamento.get().getPedidoId());
+    }
+
+    public void alteraStatus(Long id) {
+        Optional<Pagamento> pagamento = pagamentoRepository.findById(id);
+        if (!pagamento.isPresent()) throw new EntityNotFoundException();
+        pagamento.get().setStatus(Status.CONFIRMADO_SEM_INTEGRACAO);
+        pagamentoRepository.save(pagamento.get());
     }
 }

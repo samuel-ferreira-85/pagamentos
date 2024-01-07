@@ -2,7 +2,7 @@ package com.samuel.pagamentos.controller;
 
 import com.samuel.pagamentos.dto.PagamentoDto;
 import com.samuel.pagamentos.service.PagamentoService;
-import com.sun.istack.NotNull;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 
 @RestController
@@ -45,6 +46,16 @@ public class PagamentoController {
                                                   @RequestBody @Valid PagamentoDto pagamentoDto) {
         var pagamentoAtualizado = pagamentoService.atualizarPagamento(id, pagamentoDto);
         return ResponseEntity.ok(pagamentoAtualizado);
+    }
+
+    @PatchMapping("/{id}/confirmar")
+    @CircuitBreaker(name = "atualizaPedido", fallbackMethod = "pagamentoAutorizadoComIntegracaoPendente")
+    public void confirmarPedido(@PathVariable @NotNull Long id) {
+        pagamentoService.confirmarPagamento(id);
+    }
+
+    public void pagamentoAutorizadoComIntegracaoPendente(Long id, Exception e) {
+        pagamentoService.alteraStatus(id);
     }
 
     @DeleteMapping("/{id}")
