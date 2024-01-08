@@ -4,6 +4,8 @@ import com.samuel.pagamentos.dto.PagamentoDto;
 import com.samuel.pagamentos.service.PagamentoService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.AllArgsConstructor;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,7 +21,9 @@ import java.net.URI;
 @RequestMapping("/pagamentos")
 @AllArgsConstructor
 public class PagamentoController {
+
     private PagamentoService pagamentoService;
+    private RabbitTemplate rabbitTemplate;
 
     @GetMapping
     public Page<PagamentoDto> listar(@PageableDefault(size = 10) Pageable pageable) {
@@ -38,6 +42,10 @@ public class PagamentoController {
         var pagamentoCriado = pagamentoService.criarPagamento(pagamentoDto);
         URI uri = uriComponentsBuilder.path("/pagamentos/{id}")
                 .buildAndExpand(pagamentoCriado.getId()).toUri();
+
+        var message = new Message(("Pagamento criado com id " + pagamentoCriado.getId()).getBytes());
+        rabbitTemplate.send("pagamento-concluido", message);
+
         return ResponseEntity.created(uri).body(pagamentoCriado);
     }
 
