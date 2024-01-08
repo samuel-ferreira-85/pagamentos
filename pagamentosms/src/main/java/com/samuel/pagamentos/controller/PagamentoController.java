@@ -44,7 +44,8 @@ public class PagamentoController {
                 .buildAndExpand(pagamentoCriado.getId()).toUri();
 
 //        var message = new Message(("Pagamento criado com id " + pagamentoCriado.getId()).getBytes());
-        rabbitTemplate.convertAndSend("pagamento-concluido", pagamentoCriado);
+//        rabbitTemplate.convertAndSend("pagamento-concluido", pagamentoCriado);
+        rabbitTemplate.convertAndSend("pagamentos.ex", "", pagamentoCriado);
 
         return ResponseEntity.created(uri).body(pagamentoCriado);
     }

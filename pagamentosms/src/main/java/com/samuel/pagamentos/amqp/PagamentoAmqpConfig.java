@@ -1,5 +1,6 @@
 package com.samuel.pagamentos.amqp;
 
+import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -15,9 +16,8 @@ import org.springframework.context.annotation.Configuration;
 public class PagamentoAmqpConfig {
 
     @Bean
-    public Queue createQueue() {
-//        return new Queue("pagamento.concluido", false);
-        return QueueBuilder.durable("pagamento-concluido").build();
+    public FanoutExchange fanoutExchange() {
+        return new FanoutExchange("pagamento.ex");
     }
 
     @Bean
@@ -43,4 +43,10 @@ public class PagamentoAmqpConfig {
 
         return rabbitTemplate;
     }
+
+//    @Bean
+//    public Queue createQueue() {
+//     return new Queue("pagamento.concluido", false);
+//        return QueueBuilder.durable("pagamento-concluido").build();
+//    }
 }
